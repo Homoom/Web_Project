@@ -62,4 +62,91 @@
 
 2. 核心检测命令：
    flow-check --platform-test
+=== 基础必备 ===
+1. Git版本控制
+2. CMake ≥3.15
+3. C++17兼容编译器
+4. Qt5/Qt6运行时
 
+=== Windows ===
+• Visual Studio 2022 Build Tools
+• 组件选择：
+  - MSVC v143
+  - Windows 10 SDK
+• 可选：WiX Toolset（打包用）
+
+=== macOS ===
+brew install:
+- git cmake llvm
+- qt@5
+
+=== Linux/树莓派 ===
+sudo apt install:
+- build-essential
+- libgtk-3-dev 
+- libboost-all-dev
+- qtbase5-dev
+
+=== 国产系统 ===
+• 统信UOS：通过应用商店安装「开发工具套件」
+• 麒麟OS：需启用「安全软件源」后安装kylin-build-env
+
+=== 验证命令 ===
+cmake --version  # ≥3.15
+g++ --version    # 支持-std=c++17
+qmake -v         # Qt5/6版本检测
+
+=== 插件开发扩展包 ===
+
+◆ 基础SDK（所有插件必须）
+- Protocol Buffers 3.0+
+- JSON Schema验证器
+- 签名工具：openssl或gnupg
+
+◆ Python插件
+pip install：
+- cffi≥1.15
+- typeguard（类型检查）
+- 开发工具包：dev_kit_py.tar.gz（项目提供）
+
+◆ C++插件
+需额外安装：
+- CLangd语言服务器
+- vcpkg集成：
+  vcpkg install cpp-plugin-sdk
+
+◆ WebAssembly插件
+emsdk环境：
+- 安装：./emsdk install 3.1.44
+- 激活：./emsdk activate --embedded
+
+◆ 调试工具
+所有平台通用：
+- Wireshark（协议分析）
+- Frida（动态插桩）
+- 项目提供的debug_launcher
+
+=== 进阶开发配置 ===
+
+◆ IDE推荐组合
+- Python: VSCode + Pylance + 项目专用snippets插件
+- C++: CLion + 预配置的CMake模板
+- WASM: 官方Emscripten插件 + Memory Profiler
+
+◆ 国产系统特别配置
+1. 统信UOS：
+   - 需手动编译protobuf-cpp-3.21.12
+   - 插件签名必须使用SM2算法
+2. 麒麟OS：
+   - 在/etc/ld.so.conf添加/opt/kylin_dev_lib路径
+   - 使用kylin-certmgr进行代码签名
+
+◆ 插件发布流程
+1. 开发阶段：
+   export PLUGIN_MODE=debug
+   ./build --with-test
+2. 签名阶段：
+   openssl smime -sign -in plugin.zip -out signed.zip \
+   -signer cert.pem -inkey key.pem -binary
+3. 发布检查：
+   ./validate --abi-check --security-scan
