@@ -68,6 +68,9 @@
 3. C++17兼容编译器
 4. Qt5/Qt6运行时
 
+
+
+   部署指南
 === Windows ===
 • Visual Studio 2022 Build Tools
 • 组件选择：
@@ -150,3 +153,75 @@ emsdk环境：
    -signer cert.pem -inkey key.pem -binary
 3. 发布检查：
    ./validate --abi-check --security-scan
+====================
+Windows平台部署方案
+====================
+[原有内容保持不变...]
+
+■ 错误排查：
+1. MSVC编译器错误：
+   - 症状：C1083无法打开包含文件
+   - 解决：运行 vcvarsall.bat x64
+
+2. Qt链接错误：
+   - 症状：LNK2019未解析符号
+   - 解决：设置QTDIR环境变量
+
+■ 性能优化：
+   set CL=/MP /O2 /GL
+   set LINK=/LTCG
+
+■ 多语言支持：
+   - 安装语言包：winget install Microsoft.LanguageExperiencePackzh-CN
+   - 编译时添加：-DCMAKE_TRANSLATIONS_DIR=%CD%/translations
+
+====================
+macOS平台部署方案
+====================
+[原有内容保持不变...]
+
+■ 错误排查：
+1. 签名错误：
+   - 症状："app is damaged"
+   - 解决：xattr -cr /Applications/flow-editor.app
+
+2. 权限错误：
+   - 症状：dyld: Library not loaded
+   - 解决：brew link --overwrite qt@5
+
+■ 性能优化：
+   export CXXFLAGS="-O3 -march=native"
+   export LDFLAGS="-Wl,-dead_strip"
+
+■ 多语言支持：
+   - 生成翻译：lupdate flow-editor.pro
+   - 编译翻译：lrelease zh_CN.ts
+
+====================
+[其他平台类似补充...]
+
+====================
+Docker高级配置
+====================
+■ 多语言支持：
+   Dockerfile添加：
+   RUN apt install -y locales
+   RUN sed -i '/zh_CN.UTF-8/s/^# //' /etc/locale.gen
+   RUN locale-gen
+
+■ GPU加速方案：
+   1. 安装NVIDIA容器工具包
+   2. 运行参数添加：
+      --gpus all -e NVIDIA_DRIVER_CAPABILITIES=all
+
+■ 性能监控：
+   docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
+
+====================
+通用错误代码表
+====================
+| 代码  | 含义                  | 解决方案               |
+|-------|-----------------------|-----------------------|
+| 0x801 | 缺少Qt依赖            | 安装qt5-translations  |
+| 0x802 | 图形驱动不兼容        | 更新显卡驱动          |
+| 0x803 | 中文路径识别失败      | 设置LC_ALL=zh_CN.UTF8 |
