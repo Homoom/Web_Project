@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI工作流程图</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    #flow-canvas { 
+      width: 100vw; 
+      height: 100vh;
+      border: 1px solid #ccc;
+    }
+    .formula-node {
+      background-color: #f8f9fa;
+      padding: 10px;
+    }
+    /* 新增项目管理样式 */
+    #project-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background: #f5f5f5;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    .project-item {
+      padding: 10px;
+      margin: 5px 0;
+      background: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="project-sidebar">
+    <h3>项目管理</h3>
+    <div id="project-list"></div>
+    <button id="new-project">新建项目</button>
+  </div>
+  <svg id="flow-canvas">
+    <g id="connections-layer"></g>
+    <g id="nodes-layer"></g>
+  </svg>
+  <script src="app.js"></script>
+</body>
+</html>
